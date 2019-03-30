@@ -1,0 +1,1 @@
+Cocos has provided OggDecoder for win32.
