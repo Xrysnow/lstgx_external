@@ -7,13 +7,10 @@ project(${lib_name})
 
 if(ANDROID)
   add_library(${target_name} SHARED IMPORTED GLOBAL)
-else()
-  message(FATAL_ERROR "not supported yet")
-endif()
-
 set_target_properties(${target_name} PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+endif()
 
 if(ANDROID)
   set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
