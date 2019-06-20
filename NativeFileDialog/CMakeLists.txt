@@ -20,7 +20,9 @@ if(WINDOWS)
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/nfd.lib")
 elseif(MACOSX)
-  #
+  set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_mac)
+  set_target_properties(${target_name} PROPERTIES
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/libnfd.a")
 elseif(LINUX)
   #
 endif()
