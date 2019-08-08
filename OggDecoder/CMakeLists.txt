@@ -20,22 +20,33 @@ set_target_properties(${target_name} PROPERTIES
 if(ANDROID)
   set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
   
-  if(NOT EXISTS PREBUILT_ROOT)
-  message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI}")
-  endif()
+  #if(NOT EXISTS PREBUILT_ROOT)
+  #  message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI}")
+  #endif()
   
   set_target_properties(${target_name} PROPERTIES
-  IMPORTED_LOCATION "${PREBUILT_ROOT}/libogg.so"
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/libogg.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
+
+  add_library(libogg STATIC IMPORTED)
+  set_target_properties(libogg PROPERTIES
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/libogg.so"
+  )
+  add_library(libvorbis SHARED IMPORTED)
+  set_target_properties(libvorbis PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbis.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
+  add_library(libvorbisfile SHARED IMPORTED)
+  set_target_properties(libvorbisfile PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbisfile.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbisenc.so"
-  )
+  set_property(TARGET libvorbis APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libogg")
+  set_property(TARGET libvorbisfile APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libogg")
+  
+  set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libogg")
+  set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libvorbis")
+  set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libvorbisfile")
+  
 elseif(MACOSX OR IOS)
   if(MACOSX)
     set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_mac)
@@ -79,19 +90,11 @@ elseif(MACOSX OR IOS)
   endif()
 
   # mark multi libs link into single one: "${target_name}"
-  set_property(TARGET ${target_name} APPEND PROPERTY
-    INTERFACE_LINK_LIBRARIES "libogg"
-  )
-  set_property(TARGET ${target_name} APPEND PROPERTY
-    INTERFACE_LINK_LIBRARIES "libvorbis"
-  )
+  set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libogg")
+  set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libvorbis")
   if(MACOSX)
-    set_property(TARGET ${target_name} APPEND PROPERTY
-      INTERFACE_LINK_LIBRARIES "libvorbisfile"
-    )
-    set_property(TARGET ${target_name} APPEND PROPERTY
-      INTERFACE_LINK_LIBRARIES "libvorbisenc"
-    )
+    set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libvorbisfile")
+    set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "libvorbisenc")
   endif()
 
 endif()

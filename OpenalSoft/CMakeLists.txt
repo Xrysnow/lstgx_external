@@ -15,11 +15,11 @@ endif()
 if(ANDROID)
   set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
   
-  if(NOT EXISTS PREBUILT_ROOT)
-	message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI}")
-  endif()
+  #if(NOT EXISTS PREBUILT_ROOT)
+  #  message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI}")
+  #endif()
   
   set_target_properties(${target_name} PROPERTIES
-    IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/libopenal.so"
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/libopenal.so"
   )
 endif()
