@@ -19,27 +19,29 @@ set_target_properties(${target_name} PROPERTIES
 )
 
 if(WINDOWS)
-  set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_win32)
-
+  if(WIN64)
+    set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_win64)
+  else()
+    set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_win32)
+  endif()
+  
   set_target_properties(${target_name} PROPERTIES
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/avcodec-57.dll"
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/avcodec-58.dll"
     IMPORTED_IMPLIB "${PREBUILT_ROOT}/avcodec.lib"
   )
   
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/avdevice-57.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/avdevice-58.dll")
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/avfilter-6.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/avfilter-7.dll")
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/avformat-57.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/avformat-58.dll")
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/avutil-55.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/avutil-56.dll")
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/postproc-54.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/swresample-3.dll")
   set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/swresample-2.dll")
-  set_property(TARGET ${target_name} APPEND PROPERTY 
-    IMPORTED_LOCATION "${PREBUILT_ROOT}/swscale-4.dll")
+    IMPORTED_LOCATION "${PREBUILT_ROOT}/swscale-5.dll")
 
   set_property(TARGET ${target_name} APPEND PROPERTY 
     INTERFACE_LINK_LIBRARIES "${PREBUILT_ROOT}/avdevice.lib")
@@ -49,8 +51,6 @@ if(WINDOWS)
     INTERFACE_LINK_LIBRARIES "${PREBUILT_ROOT}/avformat.lib")
   set_property(TARGET ${target_name} APPEND PROPERTY 
     INTERFACE_LINK_LIBRARIES "${PREBUILT_ROOT}/avutil.lib")
-  set_property(TARGET ${target_name} APPEND PROPERTY 
-    INTERFACE_LINK_LIBRARIES "${PREBUILT_ROOT}/postproc.lib")
   set_property(TARGET ${target_name} APPEND PROPERTY 
     INTERFACE_LINK_LIBRARIES "${PREBUILT_ROOT}/swresample.lib")
   set_property(TARGET ${target_name} APPEND PROPERTY 
