@@ -282,7 +282,7 @@ typedef struct lfs_Lock {
   HANDLE fd;
 } lfs_Lock;
 static int lfs_lock_dir(lua_State *L) {
-  unsigned pathl;
+  size_t pathl;
   HANDLE fd;
   lfs_Lock *lock;
   char *ln;
