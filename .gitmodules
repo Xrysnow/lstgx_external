@@ -4,3 +4,6 @@
 [submodule "cLaTeXMath/src"]
 	path = cLaTeXMath/src
 	url = https://github.com/Xrysnow/cLaTeXMath.git
+[submodule "BurstLinker/src"]
+	path = BurstLinker/src
+	url = https://github.com/bilibili/BurstLinker.git
