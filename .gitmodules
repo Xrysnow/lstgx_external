@@ -1,3 +1,6 @@
 [submodule "NativeFileDialog/src"]
 	path = NativeFileDialog/src
 	url = https://github.com/mlabbe/nativefiledialog.git
+[submodule "cLaTeXMath/src"]
+	path = cLaTeXMath/src
+	url = https://github.com/Xrysnow/cLaTeXMath.git
