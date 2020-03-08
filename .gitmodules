@@ -7,3 +7,6 @@
 [submodule "cLaTeXMath/src"]
 	path = cLaTeXMath/src
 	url = https://github.com/NanoMichael/cLaTeXMath.git
+[submodule "nanosvg"]
+	path = nanosvg
+	url = https://github.com/memononen/nanosvg.git
