@@ -20,21 +20,35 @@ set_target_properties(${target_name} PROPERTIES
 if(ANDROID)
   set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
   
-  #if(NOT EXISTS PREBUILT_ROOT)
-  #  message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI}")
-  #endif()
+  if(NOT EXISTS ${PREBUILT_ROOT})
+    message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI} at ${PREBUILT_ROOT}")
+  endif()
   
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libogg.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
+
+  add_library(${target_name}_vorbis SHARED IMPORTED GLOBAL)
+  set_target_properties(${target_name}_vorbis PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbis.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
+  add_library(${target_name}_vorbisfile SHARED IMPORTED GLOBAL)
+  set_target_properties(${target_name}_vorbisfile PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbisfile.so"
   )
-  set_property(TARGET ${target_name} APPEND PROPERTY 
+  add_library(${target_name}_vorbisenc SHARED IMPORTED GLOBAL)
+  set_target_properties(${target_name}_vorbisenc PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libvorbisenc.so"
+  )
+
+  set_property(TARGET ${target_name} APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES ${target_name}_vorbis
+  )
+  set_property(TARGET ${target_name} APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES ${target_name}_vorbisfile
+  )
+  set_property(TARGET ${target_name} APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES ${target_name}_vorbisenc
   )
 elseif(MACOSX OR IOS)
   if(MACOSX)
