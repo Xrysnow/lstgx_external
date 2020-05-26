@@ -10,3 +10,9 @@
 [submodule "nanosvg"]
 	path = nanosvg
 	url = https://github.com/memononen/nanosvg.git
+[submodule "libzippp/src"]
+	path = libzippp/src
+	url = https://github.com/ctabin/libzippp.git
+[submodule "libzippp/libzip/src"]
+	path = libzippp/libzip/src
+	url = https://github.com/nih-at/libzip.git
