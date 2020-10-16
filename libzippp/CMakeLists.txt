@@ -14,7 +14,7 @@ target_include_directories(${target_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/
 
 set_target_properties(${target_name} PROPERTIES PREFIX "")
 add_subdirectory(libzip)
-target_link_libraries(${target_name} PRIVATE zip)
+target_link_libraries(${target_name} PRIVATE ext_zip)
 
 set_target_properties(${target_name}
   PROPERTIES
