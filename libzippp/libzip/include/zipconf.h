@@ -47,4 +47,12 @@ typedef uint64_t zip_uint64_t;
 #define ZIP_INT64_MAX	 0x7fffffffffffffffLL
 #define ZIP_UINT64_MAX	 0xffffffffffffffffULL
 
+#ifndef _Nullable
+#define _Nullable
+#endif
+
+#ifndef _Nonnull
+#define _Nonnull
+#endif
+
 #endif /* zipconf.h */
