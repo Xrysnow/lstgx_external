@@ -36,6 +36,7 @@ set(${target_name}_src
 add_library(${target_name} STATIC
   ${${target_name}_src}
 )
+use_cocos2dx_compile_options(${target_name})
 
 target_include_directories(${target_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/include)
 
@@ -45,3 +46,7 @@ set_target_properties(${target_name}
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   FOLDER "External"
 )
+
+if(XCODE OR VS)
+  cocos_mark_code_files(${target_name})
+endif()
