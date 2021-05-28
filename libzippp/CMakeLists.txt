@@ -11,6 +11,7 @@ add_library(${target_name} STATIC
   "src/src/libzippp.h"
 )
 target_include_directories(${target_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/src/src)
+target_compile_definitions(${target_name} PUBLIC LIBZIPPP_WITH_ENCRYPTION)
 
 set_target_properties(${target_name} PROPERTIES PREFIX "")
 add_subdirectory(libzip)
