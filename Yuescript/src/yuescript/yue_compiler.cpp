@@ -104,7 +104,7 @@ public:
 		std::unique_ptr<GlobalVars> globals;
 		std::unique_ptr<Options> options;
 		if (!config.options.empty()) {
-			options = std::make_unique<Options>(config.options);
+			options = std::unique_ptr<Options>(new Options(config.options));
 		}
 		DEFER(clear());
 		if (_info.node) {
@@ -118,7 +118,7 @@ public:
 					nullptr, true);
 				popScope();
 				if (config.lintGlobalVariable) {
-					globals = std::make_unique<GlobalVars>();
+					globals = std::unique_ptr<GlobalVars>(new GlobalVars());
 					for (const auto& var : _globals) {
 						int line,col;
 						std::tie(line,col) = var.second;
@@ -130,7 +130,7 @@ public:
 					int top = lua_gettop(L);
 					DEFER(lua_settop(L, top));
 					if (!options) {
-						options = std::make_unique<Options>();
+						options = std::unique_ptr<Options>(new Options());
 					}
 					pushYue("options"sv);
 					lua_pushnil(L); // options startKey
@@ -262,7 +262,7 @@ private:
 
 	void pushScope() {
 		_scopes.emplace_back();
-		_scopes.back().vars = std::make_unique<std::unordered_map<std::string,VarType>>();
+		_scopes.back().vars = std::unique_ptr<std::unordered_map<std::string,VarType>>(new std::unordered_map<std::string,VarType>());
 	}
 
 	void popScope() {
@@ -351,7 +351,7 @@ private:
 
 	void markVarShadowed() {
 		auto& scope = _scopes.back();
-		scope.allows = std::make_unique<std::unordered_set<std::string>>();
+		scope.allows = std::unique_ptr<std::unordered_set<std::string>>(new std::unordered_set<std::string>());
 	}
 
 	void markVarsGlobal(GlobalMode mode) {
@@ -363,7 +363,7 @@ private:
 		if (isLocal(name)) throw std::logic_error(_info.errorMessage("can not declare a local variable to be global"sv, x));
 		auto& scope = _scopes.back();
 		if (!scope.globals) {
-			scope.globals = std::make_unique<std::unordered_set<std::string>>();
+			scope.globals = std::unique_ptr<std::unordered_set<std::string>>(new std::unordered_set<std::string>());
 		}
 		scope.globals->insert(name);
 	}
@@ -6013,9 +6013,9 @@ YueCompiler::YueCompiler(void* sharedState,
 	const std::function<void(void*)>& luaOpen,
 	bool sameModule):
 #ifndef YUE_NO_MACRO
-_compiler(std::make_unique<YueCompilerImpl>(static_cast<lua_State*>(sharedState), luaOpen, sameModule)) {}
+_compiler(std::unique_ptr<YueCompilerImpl>(new YueCompilerImpl(static_cast<lua_State*>(sharedState), luaOpen, sameModule))) {}
 #else
-_compiler(std::make_unique<YueCompilerImpl>()) {
+_compiler(std::unique_ptr<YueCompilerImpl>(new YueCompilerImpl())) {
 	(void)sharedState;
 	(void)luaOpen;
 	(void)sameModule;
