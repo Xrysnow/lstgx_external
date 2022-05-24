@@ -5,7 +5,7 @@ set(target_name ext_${lib_name})
 
 project(${lib_name})
 
-if(ANDROID)
+if(ANDROID OR LINUX)
   add_library(${target_name} SHARED IMPORTED GLOBAL)
 elseif(MACOSX OR IOS)
   add_library(${target_name} STATIC IMPORTED GLOBAL)
@@ -17,13 +17,16 @@ set_target_properties(${target_name} PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-if(ANDROID)
-  set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
-  
-  if(NOT EXISTS ${PREBUILT_ROOT})
-    message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI} at ${PREBUILT_ROOT}")
+if(ANDROID OR LINUX)
+  if(ANDROID)
+    set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_android/${ANDROID_ABI})
+    if(NOT EXISTS ${PREBUILT_ROOT})
+      message(FATAL_ERROR "no prebuilt library for ${ANDROID_ABI} at ${PREBUILT_ROOT}")
+    endif()
+  else()
+    set(PREBUILT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/prebuilt_linux)
   endif()
-  
+
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_LOCATION "${PREBUILT_ROOT}/libogg.so"
   )
