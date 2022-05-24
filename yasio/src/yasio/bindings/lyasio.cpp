@@ -30,8 +30,13 @@ SOFTWARE.
 #include "yasio/yasio.hpp"
 #include "yasio/bindings/lyasio.hpp"
 #include "yasio/bindings/yasio_sol.hpp"
+
 using namespace yasio;
 using namespace yasio::inet;
+
+#ifndef lua_isinteger
+#define lua_isinteger lua_isnumber
+#endif
 
 namespace lyasio
 {
