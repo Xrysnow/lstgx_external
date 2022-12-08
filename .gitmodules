@@ -4,9 +4,6 @@
 [submodule "BurstLinker/src"]
 	path = BurstLinker/src
 	url = https://github.com/Xrysnow/BurstLinker.git
-[submodule "cLaTeXMath/src"]
-	path = cLaTeXMath/src
-	url = https://github.com/NanoMichael/cLaTeXMath.git
 [submodule "nanosvg"]
 	path = nanosvg
 	url = https://github.com/memononen/nanosvg.git
