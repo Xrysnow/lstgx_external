@@ -10,9 +10,6 @@
 [submodule "libzippp/src"]
 	path = libzippp/src
 	url = https://github.com/ctabin/libzippp.git
-[submodule "FairyGUI/src"]
-	path = FairyGUI/src
-	url = https://github.com/fairygui/FairyGUI-cocos2dx.git
 [submodule "MicroTeX/src"]
 	path = MicroTeX/src
 	url = https://github.com/Xrysnow/MicroTeX.git
