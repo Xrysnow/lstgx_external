@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 Jin Li, http://www.luvfight.me
+/* Copyright (c) 2022 Jin Li, dragon-fly@qq.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -8,19 +8,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <string>
-#include <unordered_set>
-#include <stack>
 #include <algorithm>
 #include <list>
+#include <memory>
 #include <sstream>
-#include "string_view.hpp"
+#include <stack>
+#include <string>
+#include <string_view>
+#include <unordered_set>
 
 #include "yuescript/ast.hpp"
 #include "yuescript/yue_ast.h"
 
 namespace yue {
-using string_view = nonstd::string_view;
+using namespace std::string_view_literals;
+using namespace std::string_literals;
 using namespace parserlib;
 
 struct ParseInfo {
@@ -28,12 +30,27 @@ struct ParseInfo {
 	std::string error;
 	std::unique_ptr<input> codes;
 	bool exportDefault = false;
+	bool exportMacro = false;
 	std::string moduleName;
-	std::string errorMessage(string_view msg, const input_range* loc) const;
+	std::string errorMessage(std::string_view msg, const input_range* loc) const;
 };
 
-template<typename T>
-struct identity { typedef T type; };
+class ParserError : public std::logic_error {
+public:
+	explicit ParserError(const std::string& msg, const pos& begin, const pos& end)
+		: std::logic_error(msg)
+		, loc(begin, end) { }
+
+	explicit ParserError(const char* msg, const pos& begin, const pos& end)
+		: std::logic_error(msg)
+		, loc(begin, end) { }
+	input_range loc;
+};
+
+template <typename T>
+struct identity {
+	typedef T type;
+};
 
 #define AST_RULE(type) \
 	rule type; \
@@ -47,13 +64,13 @@ class YueParser {
 public:
 	YueParser();
 
-	template<class AST>
-	ParseInfo parse(string_view codes) {
+	template <class AST>
+	ParseInfo parse(std::string_view codes) {
 		return parse(codes, getRule<AST>());
 	}
 
 	template <class AST>
-	bool match(string_view codes) {
+	bool match(std::string_view codes) {
 		auto rEnd = rule(getRule<AST>() >> eof());
 		return parse(codes, rEnd).node;
 	}
@@ -61,25 +78,26 @@ public:
 	std::string toString(ast_node* node);
 	std::string toString(input::iterator begin, input::iterator end);
 
-	input encode(string_view input);
+	input encode(std::string_view input);
 	std::string decode(const input& input);
 
 protected:
-	ParseInfo parse(string_view codes, rule& r);
+	ParseInfo parse(std::string_view codes, rule& r);
 
 	struct State {
 		State() {
 			indents.push(0);
 		}
 		bool exportDefault = false;
+		bool exportMacro = false;
 		int exportCount = 0;
 		int moduleFix = 0;
 		size_t stringOpen = 0;
-		std::string moduleName = "_module_0";
+		std::string moduleName = "_module_0"s;
 		std::string buffer;
 		std::stack<int> indents;
-		std::stack<bool> doStack;
-		std::stack<bool> chainBlockStack;
+		std::stack<bool> noDoStack;
+		std::stack<bool> noChainBlockStack;
 		std::stack<bool> noTableBlockStack;
 	};
 
@@ -97,6 +115,15 @@ private:
 		return Cut;
 	}
 
+	rule empty_block_error;
+	rule leading_spaces_error;
+	rule indentation_error;
+
+	rule num_char;
+	rule num_char_hex;
+	rule num_lit;
+	rule num_expo;
+	rule lj_num;
 	rule plain_space;
 	rule Break;
 	rule Any;
@@ -136,8 +163,8 @@ private:
 	rule EnableDo;
 	rule DisableChain;
 	rule EnableChain;
-	rule DisableDoChain;
-	rule EnableDoChain;
+	rule DisableDoChainArgTableBlock;
+	rule EnableDoChainArgTableBlock;
 	rule DisableArgTableBlock;
 	rule EnableArgTableBlock;
 	rule SwitchElse;
@@ -158,7 +185,7 @@ private:
 	rule FnArgs;
 	rule macro_args_def;
 	rule chain_call;
-	rule chain_item;
+	rule chain_index_chain;
 	rule ChainItems;
 	rule chain_dot_chain;
 	rule ColonChain;
@@ -166,6 +193,7 @@ private:
 	rule ChainItem;
 	rule chain_line;
 	rule chain_block;
+	rule meta_index;
 	rule Index;
 	rule invoke_chain;
 	rule TableValue;
@@ -186,7 +214,12 @@ private:
 	rule pipe_exp;
 	rule expo_value;
 	rule expo_exp;
-	rule empty_line_stop;
+	rule exp_not_tab;
+	rule local_const_item;
+	rule empty_line_break;
+	rule yue_comment;
+	rule yue_line_comment;
+	rule yue_multiline_comment;
 	rule Line;
 	rule Shebang;
 
@@ -207,6 +240,8 @@ private:
 	AST_RULE(local_flag)
 	AST_RULE(local_values)
 	AST_RULE(Local)
+	AST_RULE(const_attrib)
+	AST_RULE(close_attrib)
 	AST_RULE(LocalAttrib);
 	AST_RULE(colon_import_name)
 	AST_RULE(import_literal_inner)
@@ -219,6 +254,7 @@ private:
 	AST_RULE(Import)
 	AST_RULE(Label)
 	AST_RULE(Goto)
+	AST_RULE(ShortTabAppending)
 	AST_RULE(fn_arrow_back)
 	AST_RULE(Backcall)
 	AST_RULE(PipeBody)
@@ -226,8 +262,10 @@ private:
 	AST_RULE(ExpList)
 	AST_RULE(Return)
 	AST_RULE(With)
+	AST_RULE(SwitchList)
 	AST_RULE(SwitchCase)
 	AST_RULE(Switch)
+	AST_RULE(assignment)
 	AST_RULE(IfCond)
 	AST_RULE(IfType)
 	AST_RULE(If)
@@ -238,6 +276,8 @@ private:
 	AST_RULE(For)
 	AST_RULE(ForEach)
 	AST_RULE(Do)
+	AST_RULE(catch_block)
+	AST_RULE(Try)
 	AST_RULE(Comprehension)
 	AST_RULE(comp_value)
 	AST_RULE(TblComprehension)
@@ -277,6 +317,8 @@ private:
 	AST_RULE(Slice)
 	AST_RULE(Invoke)
 	AST_RULE(existential_op)
+	AST_RULE(table_appending_op)
+	AST_RULE(SpreadExp)
 	AST_RULE(TableLit)
 	AST_RULE(TableBlock)
 	AST_RULE(TableBlockIndent)
@@ -292,6 +334,11 @@ private:
 	AST_RULE(normal_pair)
 	AST_RULE(meta_variable_pair)
 	AST_RULE(meta_normal_pair)
+	AST_RULE(variable_pair_def)
+	AST_RULE(normal_pair_def)
+	AST_RULE(normal_def)
+	AST_RULE(meta_variable_pair_def)
+	AST_RULE(meta_normal_pair_def)
 	AST_RULE(FnArgDef)
 	AST_RULE(FnArgDefList)
 	AST_RULE(outer_var_shadow)
@@ -301,6 +348,7 @@ private:
 	AST_RULE(MacroName)
 	AST_RULE(MacroLit)
 	AST_RULE(Macro)
+	AST_RULE(MacroInPlace)
 	AST_RULE(NameOrDestructure)
 	AST_RULE(AssignableNameList)
 	AST_RULE(InvokeArgs)
@@ -309,11 +357,14 @@ private:
 	AST_RULE(unary_exp)
 	AST_RULE(ExpListAssign)
 	AST_RULE(if_line)
-	AST_RULE(unless_line)
+	AST_RULE(while_line)
 	AST_RULE(BreakLoop)
 	AST_RULE(statement_appendix)
 	AST_RULE(statement_sep)
 	AST_RULE(Statement)
+	AST_RULE(YueLineComment)
+	AST_RULE(YueMultilineComment)
+	AST_RULE(ChainAssign)
 	AST_RULE(Body)
 	AST_RULE(Block)
 	AST_RULE(BlockEnd)
@@ -321,8 +372,8 @@ private:
 };
 
 namespace Utils {
-	void replace(std::string& str, string_view from, string_view to);
-	void trim(std::string& str);
-};
+void replace(std::string& str, std::string_view from, std::string_view to);
+void trim(std::string& str);
+} // namespace Utils
 
 } // namespace yue

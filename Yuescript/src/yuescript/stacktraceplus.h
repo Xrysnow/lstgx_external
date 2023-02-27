@@ -1,5 +1,4 @@
-#pragma once
-static const char stpCodes[] = R"lua_codes(
+R"lua_codes(
 --[[
 Copyright (c) 2010 Ignacio Burgueño, modified by Li Jin
 
@@ -325,7 +324,7 @@ local function getYueLineNumber(fname, line)
 		source = yueCompiled["@="..fname]
 	end
 	if not source then
-		local name_path = fname:gsub("%.", yue.dirsep)
+		local name_path = fname:gsub("%.", yue.options.dirsep)
 		local file_exist, file_path
 		for path in package.path:gmatch("[^;]+") do
 			file_path = path:gsub("?", name_path)
@@ -336,7 +335,7 @@ local function getYueLineNumber(fname, line)
 		end
 		if file_exist then
 			local codes = yue.read_file(file_path)
-			local yueFile = codes:match("^%s*--%s*%[yue%]:%s*([^\n]*)")
+			local yueFile = codes:match("^%s*--%s*%[.*%]:%s*([^\n]*)")
 			if yueFile then
 				fname = yueFile:gsub("^%s*(.-)%s*$", "%1")
 				source = codes
@@ -399,9 +398,9 @@ function _M.stacktrace(thread, message, level)
 		end
 		dumper:add("\r\n}")
 	elseif type(message) == "string" then
-		local fname, line, msg = message:match('(.+):(%d+): (.*)$')
+		local fname, line, msg = message:match('([^\n]+):(%d+): (.*)$')
 		if fname then
-			local nfname, nline, nmsg = fname:match('(.+):(%d+): (.*)$')
+			local nfname, nmsg = fname:match('(.+):%d+: (.*)$')
 			if nfname then
 				fname = nmsg
 			end

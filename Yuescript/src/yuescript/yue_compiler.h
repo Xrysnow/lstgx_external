@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 Jin Li, http://www.luvfight.me
+/* Copyright (c) 2022 Jin Li, dragon-fly@qq.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -8,27 +8,31 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #pragma once
 
-#include <string>
-#include <tuple>
+#include <functional>
 #include <list>
 #include <memory>
+#include <string>
+#include <string_view>
+#include <tuple>
 #include <unordered_map>
-#include <functional>
-#include "yue_parser.h"
+#include <vector>
 
 namespace yue {
 
-extern const string_view version;
-extern const string_view extension;
+extern const std::string_view version;
+extern const std::string_view extension;
 
-using Options = std::unordered_map<std::string,std::string>;
+using Options = std::unordered_map<std::string, std::string>;
 
 struct YueConfig {
 	bool lintGlobalVariable = false;
 	bool implicitReturnRoot = true;
 	bool reserveLineNumber = true;
 	bool useSpaceOverTab = false;
+	bool exporting = false;
+	bool profiling = false;
 	int lineOffset = 0;
+	std::string module;
 	Options options;
 };
 
@@ -38,13 +42,15 @@ struct GlobalVar {
 	int col;
 };
 
-using GlobalVars = std::list<GlobalVar>;
+using GlobalVars = std::vector<GlobalVar>;
 
 struct CompileInfo {
 	std::string codes;
 	std::string error;
 	std::unique_ptr<GlobalVars> globals;
 	std::unique_ptr<Options> options;
+	double parseTime;
+	double compileTime;
 };
 
 class YueCompilerImpl;
@@ -55,7 +61,8 @@ public:
 		const std::function<void(void*)>& luaOpen = nullptr,
 		bool sameModule = false);
 	virtual ~YueCompiler();
-	CompileInfo compile(string_view codes, const YueConfig& config = {});
+	CompileInfo compile(std::string_view codes, const YueConfig& config = {});
+
 private:
 	std::unique_ptr<YueCompilerImpl> _compiler;
 };
