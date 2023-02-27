@@ -102,7 +102,7 @@ add_compile_options("/utf-8")
 target_include_directories(${target_name} PRIVATE ${src_dir})
 target_include_directories(${target_name} INTERFACE ${src_dir})
 
-target_link_libraries(${target_name} ext_tinyxml2)
+target_link_libraries(${target_name} tinyxml2)
 target_include_directories(${target_name} PRIVATE ${COCOS2DX_ROOT_PATH}/external/tinyxml2)
 
 set_target_properties(${target_name}
