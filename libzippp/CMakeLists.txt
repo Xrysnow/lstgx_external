@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 set(lib_name libzippp)
 set(target_name ext_${lib_name})
-project(${lib_name} VERSION 3.0.0)
+project(${lib_name} VERSION 7.1.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -34,7 +34,7 @@ target_include_directories(${target_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/
 target_compile_definitions(${target_name} PUBLIC LIBZIPPP_WITH_ENCRYPTION)
 
 set_target_properties(${target_name} PROPERTIES PREFIX "")
-target_link_libraries(${target_name} PRIVATE ext_zip)
+target_link_libraries(${target_name} PUBLIC ext_zip)
 
 set_target_properties(${target_name}
   PROPERTIES
