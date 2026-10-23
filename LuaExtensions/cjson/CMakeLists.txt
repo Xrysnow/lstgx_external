@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 
 set(lib_name cjson)
 set(target_name ext_${lib_name})
