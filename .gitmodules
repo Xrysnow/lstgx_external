@@ -13,3 +13,6 @@
 [submodule "MicroTeX/src"]
 	path = MicroTeX/src
 	url = https://github.com/Xrysnow/MicroTeX.git
+[submodule "libzip"]
+	path = libzip
+	url = https://github.com/nih-at/libzip.git
