@@ -97,7 +97,9 @@ add_library(${target_name} STATIC
 )
 
 use_cocos2dx_compile_options(${target_name})
-add_compile_options("/utf-8")
+if(MSVC)
+  target_compile_options(${target_name} PRIVATE /utf-8)
+endif()
 
 target_include_directories(${target_name} PRIVATE ${src_dir})
 target_include_directories(${target_name} INTERFACE ${src_dir})
