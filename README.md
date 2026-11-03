@@ -2,12 +2,6 @@
 
 Third party libraries for [LuaSTG-x](https://github.com/Xrysnow/LuaSTG-x).
 
-## ANGLE (Windows only)
-
-- Upstream: https://github.com/google/angle
-- Version: 2.1.0.invalid-hash (Windows DLL version; source revision not recorded)
-- License: [BSD-3-Clause](https://github.com/google/angle/blob/main/LICENSE)
-
 ## BurstLinker
 
 - Upstream: https://github.com/Xrysnow/BurstLinker
