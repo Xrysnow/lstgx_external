@@ -14,7 +14,7 @@ add_library(${target_name} STATIC
   ${${target_name}_src}
 )
 
-target_include_directories(${target_name} PRIVATE ${COCOS2DX_ROOT_PATH}/external/lua/luajit/include)
+target_link_libraries(${target_name} PUBLIC luajit)
 target_include_directories(${target_name} INTERFACE .)
 
 set_target_properties(${target_name}

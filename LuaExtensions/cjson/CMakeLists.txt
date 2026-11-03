@@ -49,7 +49,7 @@ add_library(${target_name} STATIC lua_cjson.c strbuf.c ${FPCONV_SOURCES})
 # set_target_properties(${target_name} PROPERTIES PREFIX "")
 # target_link_libraries(${target_name} ${_MODULE_LINK})
 
-target_include_directories(${target_name} PRIVATE ${COCOS2DX_ROOT_PATH}/external/lua/luajit/include)
+target_link_libraries(${target_name} PUBLIC luajit)
 target_include_directories(${target_name} INTERFACE .)
 
 set_target_properties(${target_name}
