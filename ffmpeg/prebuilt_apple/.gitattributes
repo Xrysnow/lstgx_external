@@ -1,2 +1,0 @@
-# Preserve the exact bytes of signed framework metadata and binaries.
-FFmpeg.xcframework/** -text
