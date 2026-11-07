@@ -4,7 +4,7 @@ set(lib_name MicroTeX)
 set(target_name ext_${lib_name})
 
 project(${lib_name})
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 set(src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/src)
 
